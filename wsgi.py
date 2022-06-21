@@ -18,7 +18,7 @@ IDENTIFIER_GENERATOR = itertools.count(START_INDEX)
 def hello():
     return "Hello World!"
 
-@app.route('/api/v1/products')
+@app.route('/api/v1/products', methods=['GET'])
 def return_products():
     return jsonify(PRODUCTS), 200
 
@@ -57,3 +57,28 @@ def create_product():
     PRODUCTS[next_id] = {'id': next_id, 'name':name}
     
     return jsonify(PRODUCTS[next_id]), 201
+
+@app.route('/api/v1/products/<int:id>', methods=['PATCH'])
+def update_one_product(product_id):
+    
+    data = request.get_json()
+    
+    if data is None:
+        abort(400)
+
+    name = data.get('name')
+
+    if name is None:
+        abort(400)
+
+    if name == '' or not isinstance(name, str):
+        abort(422)
+
+    product = PRODUCTS.get(product_id)
+
+    if product is None:
+        abort(404)
+
+    PRODUCTS[product_id]['name'] = name
+
+    return '', 204
