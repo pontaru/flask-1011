@@ -16,4 +16,12 @@ def hello():
 
 @app.route('/api/v1/products')
 def return_products():
-    return jsonify(PRODUCTS)
+    return jsonify(PRODUCTS), 200
+
+@app.route('/api/v1/products/<int:id>', methods=['GET'])
+def return_one_product(id):
+    product = PRODUCTS.get(id)
+    
+    if product is None:
+        abort(404)
+    return jsonify(product), 200
